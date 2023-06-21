@@ -9,10 +9,15 @@ import java.awt.print.PrinterIOException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPrintable;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 public class PaginaPrincipal extends javax.swing.JFrame {
 
@@ -230,12 +235,22 @@ public class PaginaPrincipal extends javax.swing.JFrame {
             PrinterJob job = PrinterJob.getPrinterJob();
 
             switch (LabelTipo.getText()) {
-                case "txt" -> job.setPrintable(new FilePrintable(archivo));
-                case "pdf" -> throw new UnsupportedOperationException();
+                case "txt" ->
+                    job.setPrintable(new FilePrintable(archivo));
+                case "pdf" -> {
+                    try {
+                        PDDocument document = PDDocument.load(archivo);
+                        job.setPrintable(new PDFPrintable(document));
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null, "Error al cargar el pdf.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
+                    break;
+                }
+
                 case "png", "jpg" -> {
                     try {
                         job.setPrintable(new ImagePrintable(archivo));
-                    }catch (IOException e) {
+                    } catch (IOException e) {
                         JOptionPane.showMessageDialog(null, "Error al cargar la imagen.", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
                 }
