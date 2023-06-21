@@ -13,8 +13,11 @@ import javax.imageio.ImageIO;
 public class ImagePrintable implements Printable {
     private BufferedImage imagen;
     
-    public ImagePrintable(File archivo) throws IOException{
+    public ImagePrintable(File archivo) throws IOException, Exception{
         this.imagen = ImageIO.read(archivo);
+        if (this.imagen == null) {
+            throw new Exception();
+        }
     }
     
     @Override

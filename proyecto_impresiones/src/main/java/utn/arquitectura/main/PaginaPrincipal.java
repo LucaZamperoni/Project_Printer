@@ -235,8 +235,12 @@ public class PaginaPrincipal extends javax.swing.JFrame {
             PrinterJob job = PrinterJob.getPrinterJob();
 
             switch (LabelTipo.getText()) {
-                case "txt" ->
+                
+                case "txt" -> {
                     job.setPrintable(new FilePrintable(archivo));
+                    break;
+                }
+                
                 case "pdf" -> {
                     try {
                         PDDocument document = PDDocument.load(archivo);
@@ -249,10 +253,14 @@ public class PaginaPrincipal extends javax.swing.JFrame {
 
                 case "png", "jpg" -> {
                     try {
-                        job.setPrintable(new ImagePrintable(archivo));
+                        ImagePrintable img = new ImagePrintable(archivo);
+                        job.setPrintable(img);
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(null, "Error al cargar la imagen.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Error al cargar la imagen.", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
+                    break;
                 }
             }
 
