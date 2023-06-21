@@ -8,6 +8,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterIOException;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -227,7 +228,18 @@ public class PaginaPrincipal extends javax.swing.JFrame {
     private void LabelImprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelImprimirMouseClicked
         if (archivo != null) {
             PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable(new FilePrintable(archivo));
+
+            switch (LabelTipo.getText()) {
+                case "txt" -> job.setPrintable(new FilePrintable(archivo));
+                case "pdf" -> throw new UnsupportedOperationException();
+                case "png", "jpg" -> {
+                    try {
+                        job.setPrintable(new ImagePrintable(archivo));
+                    }catch (IOException e) {
+                        JOptionPane.showMessageDialog(null, "Error al cargar la imagen.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
 
             if (job.printDialog()) {
                 try {
@@ -266,7 +278,7 @@ public class PaginaPrincipal extends javax.swing.JFrame {
                     texto += "Archivo: " + job.pDocument + "\n"
                             + "Usuario: " + job.pUserName + "\n"
                             + "Estado: " + job.pStatus != null ? job.pStatus : job.Status + "\n"
-                            + "Total de páginas: " + job.TotalPages + "\n";
+                                    + "Total de páginas: " + job.TotalPages + "\n";
                 }
             }
 
