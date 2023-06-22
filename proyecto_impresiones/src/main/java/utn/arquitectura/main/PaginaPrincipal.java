@@ -340,8 +340,10 @@ public class PaginaPrincipal extends javax.swing.JFrame {
             }
             if (texto.contains("null")) {
                 JOptionPane.showMessageDialog(null, "Error en la conexión con la impresora.", "ERROR", JOptionPane.ERROR_MESSAGE);
+                AreaTextoColaImpresion.setText(" Ocurrió un error en la impresión.");
+            } else {
+                AreaTextoColaImpresion.setText(texto);
             }
-            AreaTextoColaImpresion.setText(texto);
         } else {
             JOptionPane.showMessageDialog(null, "Error al abrir la impresora.", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
