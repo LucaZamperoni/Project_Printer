@@ -17,7 +17,7 @@ Se utilizan para interactuar con funciones nativas de Windows relacionadas con l
         Esta clase proporciona métodos de utilidad para obtener información detallada sobre los trabajos de impresión 
         en la cola de impresión. Permite obtener información adicional, como el nombre del documento, el usuario que envió el trabajo, 
         el estado del trabajo, el número total de páginas, entre otros.
-*/
+ */
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.Winspool;
 import com.sun.jna.platform.win32.WinspoolUtil;
@@ -263,7 +263,7 @@ public class PaginaPrincipal extends javax.swing.JFrame {
     private void LabelImprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelImprimirMouseClicked
         if (archivo != null) {
             PrinterJob job = PrinterJob.getPrinterJob();
-            
+
             // Imprime el archivo seleccionado según su tipo de archivo
             switch (LabelTipo.getText()) {
 
@@ -319,7 +319,7 @@ public class PaginaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_LabelImprimirMouseClicked
 
     private void imprimirColaImpresion(String nombreImpresora) {
-        
+
         // Creación de una referencia al identificador de la impresora
         WinNT.HANDLEByReference phPrinter = new WinNT.HANDLEByReference();
         boolean ok = Winspool.INSTANCE.OpenPrinter(nombreImpresora, phPrinter, null);
@@ -338,7 +338,9 @@ public class PaginaPrincipal extends javax.swing.JFrame {
                                     + "Total de páginas: " + job.TotalPages + "\n";
                 }
             }
-
+            if (texto.contains("null")) {
+                JOptionPane.showMessageDialog(null, "Error en la conexión con la impresora.", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
             AreaTextoColaImpresion.setText(texto);
         } else {
             JOptionPane.showMessageDialog(null, "Error al abrir la impresora.", "ERROR", JOptionPane.ERROR_MESSAGE);
