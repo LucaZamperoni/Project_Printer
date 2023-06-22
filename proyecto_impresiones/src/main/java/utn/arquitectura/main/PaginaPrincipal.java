@@ -1,23 +1,39 @@
 package utn.arquitectura.main;
 
+/*
+Las librerías importadas pertenecen a JNA (Java Native Access).
+Se utilizan para interactuar con funciones nativas de Windows relacionadas con la administración de impresoras y la cola de impresión. 
+
+    com.sun.jna.platform.win32.WinNT: 
+        Proporciona definiciones de constantes y estructuras utilizadas por las API de Windows relacionadas 
+        con el manejo de objetos del sistema, como identificadores de impresoras y trabajos de impresión.
+
+    com.sun.jna.platform.win32.Winspool: 
+        Proporciona definiciones de funciones y estructuras utilizadas para interactuar con las API de Windows relacionadas 
+        con la administración de impresoras y la cola de impresión. Proporciona métodos para abrir y cerrar impresoras, obtener 
+        información sobre los trabajos en la cola de impresión, enviar trabajos de impresión, etc.
+
+    com.sun.jna.platform.win32.WinspoolUtil: 
+        Esta clase proporciona métodos de utilidad para obtener información detallada sobre los trabajos de impresión 
+        en la cola de impresión. Permite obtener información adicional, como el nombre del documento, el usuario que envió el trabajo, 
+        el estado del trabajo, el número total de páginas, entre otros.
+*/
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.Winspool;
 import com.sun.jna.platform.win32.WinspoolUtil;
+
 import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterIOException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPrintable;
-import org.apache.pdfbox.rendering.PDFRenderer;
 
 public class PaginaPrincipal extends javax.swing.JFrame {
 
@@ -215,7 +231,21 @@ public class PaginaPrincipal extends javax.swing.JFrame {
     private void LabelSeleccionarArchivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelSeleccionarArchivoMouseClicked
         JFileChooser fileChooser = new JFileChooser();
 
-        // Configurar el filtro de archivos: EXPLICAR FORMATOS
+        // Configurar el filtro de archivos:
+        /*
+            txt: Este tipo de archivo representa un archivo de texto sin formato. 
+            Es ampliamente utilizado para almacenar información de texto simple.
+        
+            pdf: Los archivos PDF son utilizados para representar documentos de manera independiente del software, el hardware y el sistema operativo. 
+            Son archivos de solo lectura que conservan el formato original del documento, incluidos los elementos de texto, imágenes, gráficos y diseño. 
+            Para imprimir un archivo PDF, se utiliza un objeto PDFPrintable que interpreta el contenido del PDF y lo envía a la impresora.
+        
+            png: Los archivos PNG (Portable Network Graphics) son un formato de imagen comprimida sin pérdida. 
+            Se utilizan para almacenar imágenes con transparencia y admiten una amplia gama de colores.
+        
+            jpg: Los archivos JPG (Joint Photographic Experts Group) son un formato de imagen comprimida con pérdida.
+            Son ampliamente utilizados para almacenar fotografías y admiten una compresión significativa sin una pérdida apreciable de calidad de imagen. 
+         */
         FileNameExtensionFilter filter = new FileNameExtensionFilter("", "txt", "pdf", "png", "jpg");
         fileChooser.setFileFilter(filter);
 
@@ -233,14 +263,15 @@ public class PaginaPrincipal extends javax.swing.JFrame {
     private void LabelImprimirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LabelImprimirMouseClicked
         if (archivo != null) {
             PrinterJob job = PrinterJob.getPrinterJob();
-
+            
+            // Imprime el archivo seleccionado según su tipo de archivo
             switch (LabelTipo.getText()) {
-                
+
                 case "txt" -> {
                     job.setPrintable(new FilePrintable(archivo));
                     break;
                 }
-                
+
                 case "pdf" -> {
                     try {
                         PDDocument document = PDDocument.load(archivo);
@@ -268,7 +299,8 @@ public class PaginaPrincipal extends javax.swing.JFrame {
                 try {
                     imprimirColaImpresion(job.getPrintService().getName());
                     job.print();
-
+                    JOptionPane.showMessageDialog(null,
+                            "El archivo se está imprimiendo!", "Acción Completada", JOptionPane.INFORMATION_MESSAGE);
                 } catch (PrinterAbortException e) {
                     JOptionPane.showMessageDialog(null,
                             "Se ha abortado la impresión del archivo. \nHa solicitado la cancelación de la impresión antes de que se complete.", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -287,6 +319,8 @@ public class PaginaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_LabelImprimirMouseClicked
 
     private void imprimirColaImpresion(String nombreImpresora) {
+        
+        // Creación de una referencia al identificador de la impresora
         WinNT.HANDLEByReference phPrinter = new WinNT.HANDLEByReference();
         boolean ok = Winspool.INSTANCE.OpenPrinter(nombreImpresora, phPrinter, null);
         if (ok) {
